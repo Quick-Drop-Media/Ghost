@@ -5,6 +5,7 @@ const errors = require('@tryghost/errors');
 const {i18n} = require('../../lib/common');
 const logging = require('../../../shared/logging');
 const models = require('../../models');
+// TODO: Make the "provider" service agnostic
 const mailgunProvider = require('./mailgun');
 const sentry = require('../../../shared/sentry');
 const debug = require('ghost-ignition').debug('mega');

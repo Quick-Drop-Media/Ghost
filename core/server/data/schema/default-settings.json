@@ -342,6 +342,14 @@
         }
     },
     "email": {
+        "bulk_email_provider": {
+            "defaultValue": "mailgun",
+            "validations": {
+                "isEmpty": false,
+                "isIn": [["mailgun", "ses"]]
+            },
+            "type": "string"
+        },
         "mailgun_domain": {
             "defaultValue": null,
             "type": "string"
@@ -351,6 +359,14 @@
             "type": "string"
         },
         "mailgun_base_url": {
+            "defaultValue": null,
+            "type": "string"
+        },
+        "ses_access_key_id": {
+            "defaultValue": null,
+            "type": "string"
+        },
+        "ses_secret_access_key": {
             "defaultValue": null,
             "type": "string"
         },
