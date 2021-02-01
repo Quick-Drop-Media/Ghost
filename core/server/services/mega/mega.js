@@ -49,6 +49,7 @@ const getEmailData = async (postModel, options) => {
     };
 };
 
+// TODO: Ok this is a good place to test SES
 const sendTestEmail = async (postModel, toEmails) => {
     const emailData = await getEmailData(postModel);
     emailData.subject = `[Test] ${emailData.subject}`;

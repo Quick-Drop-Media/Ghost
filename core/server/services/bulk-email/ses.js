@@ -1,35 +1,32 @@
+const AWS = require('aws-sdk');
 const _ = require('lodash');
-const {URL} = require('url');
 const logging = require('../../../shared/logging');
-const configService = require('../../../shared/config');
 const settingsCache = require('../settings/cache');
 
-const BATCH_SIZE = 1000;
+//
+const BATCH_SIZE = 50;
 
 function createSES(config) {
-    var AWS = require('aws-sdk');
-    AWS.config.update({region: config.region});
-
-    return new AWS.SES({
-        apiVersion: '2010-12-01'
+    AWS.config.update({
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+        region: config.region
     });
+    return new AWS.SES({apiVersion: '2010-12-01'});
 }
 
 function getInstance() {
-    const bulkEmailConfig = configService.get('bulkEmail');
     const bulkEmailSetting = {
         accessKeyId: settingsCache.get('ses_access_key_id'),
-        secretAccessKey: settingsCache.get('ses_secret_access_key')
+        secretAccessKey: settingsCache.get('ses_secret_access_key'),
+        region: settingsCache.get('ses_region')
     };
-    // TODO: What is this hard-coded mailgun crap...
-    const hasMailgunConfig = !!(bulkEmailConfig && bulkEmailConfig.mailgun);
-    const hasMailgunSetting = !!(bulkEmailSetting && bulkEmailSetting.apiKey && bulkEmailSetting.baseUrl && bulkEmailSetting.domain);
+    const hasBulkEmailSettings = !!(bulkEmailSetting && bulkEmailSetting.accessKeyId && bulkEmailSetting.secretAccessKey && bulkEmailSetting.region);
 
-    if (!hasMailgunConfig && !hasMailgunSetting) {
+    if (!hasBulkEmailSettings) {
         logging.warn(`Bulk email service is not configured`);
     } else {
-        let mailgunConfig = hasMailgunConfig ? bulkEmailConfig.mailgun : bulkEmailSetting;
-        return createSES(mailgunConfig);
+        return createSES(hasBulkEmailSettings);
     }
     return null;
 }
@@ -45,65 +42,61 @@ function getInstance() {
 function send(message, recipientData, replacements) {
     if (recipientData.length > BATCH_SIZE) {
         // err - too many recipients
+        // TODO: ^ wait where is the error?
     }
+    const sesServiceObject = getInstance();
 
-    let messageData = {};
+    const messageContent = _.pick(message, 'subject', 'html', 'plaintext');
+
+    var templateData = {
+        Template: {
+            TemplateName: 'TestTemplate',
+            SubjectPart: 'Greetings, {{name}}!',
+            HtmlPart: messageContent,
+            TextPart: 'Dear {{name}},\r\nYour favorite animal is {{favoriteanimal}}.'
+        }
+    };
+    console.log('Yo I am creating a template!');
+    console.log('?????');
+    // TODO: Use update in future? Check if already exists.
+    new AWS.SES({apiVersion: '2010-12-01'}).createTemplate(templateData, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     console.log(data);           // successful response
+    });
+
+    // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-sending-email.html#ses-examples-sendbulktemplatedemail
+    var messageData = {
+        Destinations: [
+            {
+                Destination: {
+                    ToAddresses: ['matt@quickdropmedia.com']
+                },
+                ReplacementTemplateData: '{ \"name\":\"Matt\", \"favoriteanimal\":\"angelfish\" }'
+            },
+            {
+                Destination: {
+                    ToAddresses: ['dev@quickdropmedia.com']
+                },
+                ReplacementTemplateData: '{ \"name\":\"Dev User\", \"favoriteanimal\":\"kangaroo\" }'
+            }
+        ],
+        Source: 'Mary Major <mary.major@example.com>',
+        Template: 'TestTemplate',
+        DefaultTemplateData: '{ \"name\":\"Quick Dropper\", \"favoriteanimal\":\"t-rex\" }',
+        ReplyToAddresses: ['squad@quickdropmedia.com']
+    };
 
     try {
-        const bulkEmailConfig = configService.get('bulkEmail');
-        const mailgunInstance = getInstance();
-
-        const messageContent = _.pick(message, 'subject', 'html', 'plaintext');
-
-        // update content to use Mailgun variable syntax for replacements
-        replacements.forEach((replacement) => {
-            messageContent[replacement.format] = messageContent[replacement.format].replace(
-                replacement.match,
-                `%recipient.${replacement.id}%`
-            );
+        console.log('SCHMO HI YA SEND EMAIL PLEASE!!!');
+        var sendPromise = sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
+        sendPromise.then(function(data) {
+            console.log('SCHMO sendPromise.then()');
+            console.log(data);
+        }).catch(function(err) {
+            console.log('SCHMO sendPromise.catch()');
+            console.log(err, err.stack);
         });
-
-        messageData = {
-            to: Object.keys(recipientData),
-            from: message.from,
-            'h:Reply-To': message.replyTo || message.reply_to,
-            subject: messageContent.subject,
-            html: messageContent.html,
-            text: messageContent.plaintext,
-            'recipient-variables': recipientData
-        };
-
-        // add a reference to the original email record for easier mapping of mailgun event -> email
-        if (message.id) {
-            messageData['v:email-id'] = message.id;
-        }
-
-        const tags = ['bulk-email'];
-        if (bulkEmailConfig && bulkEmailConfig.mailgun && bulkEmailConfig.mailgun.tag) {
-            tags.push(bulkEmailConfig.mailgun.tag);
-        }
-        messageData['o:tag'] = tags;
-
-        if (bulkEmailConfig && bulkEmailConfig.mailgun && bulkEmailConfig.mailgun.testmode) {
-            messageData['o:testmode'] = true;
-        }
-
-        // enable tracking if turned on for this email
-        if (message.track_opens) {
-            messageData['o:tracking-opens'] = true;
-        }
-
-        return new Promise((resolve, reject) => {
-            mailgunInstance.messages().send(messageData, (error, body) => {
-                if (error) {
-                    return reject(error);
-                }
-
-                return resolve({
-                    id: body.id
-                });
-            });
-        });
+        return sendPromise;
     } catch (error) {
         return Promise.reject({error, messageData});
     }

@@ -7,11 +7,16 @@ const logging = require('../../../shared/logging');
 const models = require('../../models');
 // TODO: Make the "provider" service agnostic
 const mailgunProvider = require('./mailgun');
+const sesProvider = require('./ses');
 const sentry = require('../../../shared/sentry');
 const debug = require('ghost-ignition').debug('mega');
 const postEmailSerializer = require('../mega/post-email-serializer');
+const settingsCache = require('../settings/cache');
 
 const BATCH_SIZE = mailgunProvider.BATCH_SIZE;
+
+
+var bulkEmailProvider = sesProvider; // settingsCache.get('bulk_email_provider');
 
 /**
  * An object representing batch request result
@@ -200,8 +205,10 @@ module.exports = {
      * @returns {Object} - {providerId: 'xxx'}
      */
     send(emailData, recipients) {
-        const mailgunInstance = mailgunProvider.getInstance();
-        if (!mailgunInstance) {
+        // TODO: getInstance() (rename getProviderInstance() should return either the mailgun or sse client
+        // Note that this is kind of silly because the instance isn't actually used downstream...
+        const client = bulkEmailProvider.getInstance();
+        if (!client) {
             return;
         }
 
@@ -230,7 +237,7 @@ module.exports = {
             recipientData[recipient.member_email] = data;
         });
 
-        return mailgunProvider.send(emailData, recipientData, replacements).then((response) => {
+        return bulkEmailProvider.send(emailData, recipientData, replacements).then((response) => {
             debug(`sent message (${Date.now() - startTime}ms)`);
             return response;
         }).catch((error) => {
