@@ -1,4 +1,5 @@
-const AWS = require('aws-sdk');
+var AWS = require('aws-sdk');
+AWS.config.update({region: 'us-east-2'});
 const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
@@ -57,11 +58,12 @@ function send(message, recipientData, replacements) {
         }
     };
     console.log('Yo I am creating a template!');
-    console.log('?????');
+    let templatePromise = new AWS.SES({apiVersion: '2010-12-01'}).createTemplate(templateData).promise();
     // TODO: Use update in future? Check if already exists.
-    new AWS.SES({apiVersion: '2010-12-01'}).createTemplate(templateData, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(data);           // successful response
+    templatePromise.then(function(data) {
+        console.log(data);
+    }).catch(function(err) {
+        console.error(err, err.stack);
     });
 
     // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-sending-email.html#ses-examples-sendbulktemplatedemail
@@ -90,10 +92,8 @@ function send(message, recipientData, replacements) {
         console.log('SCHMO HI YA SEND EMAIL PLEASE!!!');
         var sendPromise = sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
         sendPromise.then(function(data) {
-            console.log('SCHMO sendPromise.then()');
             console.log(data);
         }).catch(function(err) {
-            console.log('SCHMO sendPromise.catch()');
             console.log(err, err.stack);
         });
         return sendPromise;

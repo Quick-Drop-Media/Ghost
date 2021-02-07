@@ -15,7 +15,6 @@ const settingsCache = require('../settings/cache');
 
 const BATCH_SIZE = mailgunProvider.BATCH_SIZE;
 
-
 var bulkEmailProvider = sesProvider; // settingsCache.get('bulk_email_provider');
 
 /**
