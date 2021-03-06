@@ -19,7 +19,7 @@
         <img src="https://img.shields.io/github/release/TryGhost/Ghost.svg" alt="Latest release" />
     </a>
     <a href="https://github.com/TryGhost/Ghost/actions">
-        <img src="https://github.com/TryGhost/Ghost/workflows/Test%20Suite/badge.svg?branch=master" alt="Build status" />
+        <img src="https://github.com/TryGhost/Ghost/workflows/Test%20Suite/badge.svg?branch=main" alt="Build status" />
     </a>
     <a href="https://github.com/TryGhost/Ghost/contributors/">
         <img src="https://img.shields.io/github/contributors/TryGhost/Ghost.svg" alt="Contributors" />
@@ -93,4 +93,4 @@ To stay up to date with all the latest news and product updates, make sure you [
 
 # Copyright & License
 
-Copyright (c) 2013-2020 Ghost Foundation - Released under the [MIT license](LICENSE). Ghost and the Ghost Logo are trademarks of Ghost Foundation Ltd. Please see our [trademark policy](https://ghost.org/trademark/) for info on acceptable usage.
+Copyright (c) 2013-2021 Ghost Foundation - Released under the [MIT license](LICENSE). Ghost and the Ghost Logo are trademarks of Ghost Foundation Ltd. Please see our [trademark policy](https://ghost.org/trademark/) for info on acceptable usage.
