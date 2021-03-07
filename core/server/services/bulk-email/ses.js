@@ -4,7 +4,6 @@ const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
 
-//
 const BATCH_SIZE = 50;
 
 function createSES(config) {
@@ -27,69 +26,56 @@ function getInstance() {
     if (!hasBulkEmailSettings) {
         logging.warn(`Bulk email service is not configured`);
     } else {
-        return createSES(hasBulkEmailSettings);
+        return createSES(bulkEmailSetting);
     }
     return null;
 }
 
-// recipientData format:
-// {
-//     'test@example.com': {
-//         name: 'Test User',
-//         unique_id: '12345abcde',
-//         unsubscribe_url: 'https://example.com/unsub/me'
-//     }
-// }
 function send(message, recipientData, replacements) {
     if (recipientData.length > BATCH_SIZE) {
         // err - too many recipients
-        // TODO: ^ wait where is the error?
     }
+
+    let templateName = 'TestPostNewsletter';
     const sesServiceObject = getInstance();
-
-    const messageContent = _.pick(message, 'subject', 'html', 'plaintext');
-
     var templateData = {
         Template: {
-            TemplateName: 'TestTemplate',
-            SubjectPart: 'Greetings, {{name}}!',
-            HtmlPart: messageContent,
-            TextPart: 'Dear {{name}},\r\nYour favorite animal is {{favoriteanimal}}.'
+            TemplateName: templateName,
+            SubjectPart: message.subject,
+            HtmlPart: message.html,
+            TextPart: message.plaintext
         }
     };
-    console.log('Yo I am creating a template!');
-    let templatePromise = new AWS.SES({apiVersion: '2010-12-01'}).createTemplate(templateData).promise();
-    // TODO: Use update in future? Check if already exists.
+
+    let templatePromise = sesServiceObject.updateTemplate(templateData).promise();
     templatePromise.then(function(data) {
-        console.log(data);
+        console.log(`Template ${templateName} updated`);
     }).catch(function(err) {
         console.error(err, err.stack);
     });
 
     // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-sending-email.html#ses-examples-sendbulktemplatedemail
-    var messageData = {
-        Destinations: [
-            {
-                Destination: {
-                    ToAddresses: ['matt@quickdropmedia.com']
-                },
-                ReplacementTemplateData: '{ \"name\":\"Matt\", \"favoriteanimal\":\"angelfish\" }'
+    let destinations = [];
+    for (const recipient in recipientData) {
+        destinations.push({
+            Destination: {
+                ToAddresses: new Array(recipient),
             },
-            {
-                Destination: {
-                    ToAddresses: ['dev@quickdropmedia.com']
-                },
-                ReplacementTemplateData: '{ \"name\":\"Dev User\", \"favoriteanimal\":\"kangaroo\" }'
-            }
-        ],
-        Source: 'Mary Major <mary.major@example.com>',
-        Template: 'TestTemplate',
-        DefaultTemplateData: '{ \"name\":\"Quick Dropper\", \"favoriteanimal\":\"t-rex\" }',
-        ReplyToAddresses: ['squad@quickdropmedia.com']
+            ReplacementTemplateData: JSON.stringify(recipientData[recipient])
+        });
+    }
+
+    let messageData = {
+        Destinations: destinations,
+        Source: 'Dev <dev@quickdropmedia.com>',
+        Template: templateName,
+        DefaultTemplateData: '{ \"unsubscribe_url\":\"https://quickdropmedia.com/contact/\"}',
+        ReplyToAddresses: ['dev@quickdropmedia.com']
     };
+    console.log(messageData);
+    console.log(messageData["Destinations"][0]["Destination"]);
 
     try {
-        console.log('SCHMO HI YA SEND EMAIL PLEASE!!!');
         var sendPromise = sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
         sendPromise.then(function(data) {
             console.log(data);
