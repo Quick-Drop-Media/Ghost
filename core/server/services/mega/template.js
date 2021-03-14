@@ -205,6 +205,7 @@ h3 {
     margin: 1.5em 0 0.5em 0;
     font-size: 26px;
     line-height: 1.25em;
+    color: #007dde;
 }
 
 h4 {
@@ -882,13 +883,8 @@ ${ templateSettings.showBadge ? `
                                     <tr>
                                         <td class="site-info" width="100%" align="center">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                                ${ site.iconUrl ? `
                                                 <tr>
-                                                    <td class="site-icon"><a href="${site.url}"><img src="${site.iconUrl}" border="0"></a></td>
-                                                </tr>
-                                                ` : ``}
-                                                <tr>
-                                                    <td class="site-url"><div style="width: 100% !important;"><a href="${site.url}">${site.title}</a></div></td>
+                                                    <td><a href="${site.url}"><img src="${site.logo}" border="0"></a></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -904,7 +900,6 @@ ${ templateSettings.showBadge ? `
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                                 <tr>
                                                     <td class="post-meta">
-                                                        By ${post.authors} –
                                                         ${post.published_at} –
                                                         <a href="${post.url}" class="view-online-link">View online →</a>
                                                     </td>

@@ -182,7 +182,7 @@ module.exports = {
             // log any error that didn't come from the provider which would have already logged it
             if (!error.code || error.code !== 'BULK_EMAIL_SEND_FAILED') {
                 let ghostError = new errors.InternalServerError({
-                    err: error
+                    err: errorn
                 });
                 sentry.captureException(ghostError);
                 logging.error(ghostError);

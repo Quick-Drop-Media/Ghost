@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-AWS.config.update({region: 'us-east-2'});
 const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
@@ -22,7 +21,6 @@ function getInstance() {
         region: settingsCache.get('ses_region')
     };
     const hasBulkEmailSettings = !!(bulkEmailSetting && bulkEmailSetting.accessKeyId && bulkEmailSetting.secretAccessKey && bulkEmailSetting.region);
-
     if (!hasBulkEmailSettings) {
         logging.warn(`Bulk email service is not configured`);
     } else {
@@ -46,14 +44,6 @@ function send(message, recipientData, replacements) {
             TextPart: message.plaintext
         }
     };
-
-    let templatePromise = sesServiceObject.updateTemplate(templateData).promise();
-    templatePromise.then(function(data) {
-        console.log(`Template ${templateName} updated`);
-    }).catch(function(err) {
-        console.error(err, err.stack);
-    });
-
     // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-sending-email.html#ses-examples-sendbulktemplatedemail
     let destinations = [];
     for (const recipient in recipientData) {
@@ -65,6 +55,14 @@ function send(message, recipientData, replacements) {
         });
     }
 
+    let templatePromise = sesServiceObject.updateTemplate(templateData).promise();
+    // TODO: How to wait until this completes before returning the sendBulkTemplatedEmail promise?
+    templatePromise.then(function(data) {
+        console.log(data);
+    }).catch(function(err) {
+        console.error(err, err.stack);
+    });
+
     let messageData = {
         Destinations: destinations,
         Source: 'Dev <dev@quickdropmedia.com>',
@@ -72,20 +70,8 @@ function send(message, recipientData, replacements) {
         DefaultTemplateData: '{ \"unsubscribe_url\":\"https://quickdropmedia.com/contact/\"}',
         ReplyToAddresses: ['dev@quickdropmedia.com']
     };
-    console.log(messageData);
-    console.log(messageData["Destinations"][0]["Destination"]);
 
-    try {
-        var sendPromise = sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
-        sendPromise.then(function(data) {
-            console.log(data);
-        }).catch(function(err) {
-            console.log(err, err.stack);
-        });
-        return sendPromise;
-    } catch (error) {
-        return Promise.reject({error, messageData});
-    }
+    return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
 }
 
 module.exports = {
