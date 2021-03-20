@@ -67,7 +67,7 @@ function send(message, recipientData, replacements) {
         Destinations: destinations,
         Source: 'Dev <dev@quickdropmedia.com>',
         Template: templateName,
-        DefaultTemplateData: '{ \"unsubscribe_url\":\"https://quickdropmedia.com/contact/\"}',
+        DefaultTemplateData: '{\"unsubscribe_url\": \"https://quickdropmedia.com/contact/\"}',
         ReplyToAddresses: ['dev@quickdropmedia.com']
     };
 
