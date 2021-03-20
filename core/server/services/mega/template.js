@@ -929,6 +929,13 @@ ${ templateSettings.showBadge ? `
                             <td class="wrapper" align="center">
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top: 40px; padding-bottom: 30px;">
                                     ${iff(!!templateSettings.footerContent, `<tr><td class="footer">${templateSettings.footerContent}</td></tr>`, '')}
+
+                                    <tr><td class="footer">Please reach out to us with any questions, feedback, or advertising inquiries.<br>
+                                    We look forward to hearing from you!<br>
+                                    Contact: Squad@QuickDropMedia.com<br>
+                                    PO Box 112662, Pittsburgh PA, 15241
+                                    </td></tr>
+
                                     <tr>
                                         <td class="footer">${site.title} &copy; ${date.getFullYear()} – <a href="%recipient.unsubscribe_url%">Unsubscribe</a></td>
                                     </tr>
