@@ -65,10 +65,10 @@ function send(message, recipientData, replacements) {
 
     let messageData = {
         Destinations: destinations,
-        Source: 'Dev <dev@quickdropmedia.com>',
+        Source: 'Quick Drop Squad <squad@quickdropmedia.com>',
         Template: templateName,
         DefaultTemplateData: '{\"unsubscribe_url\": \"https://quickdropmedia.com/contact/\"}',
-        ReplyToAddresses: ['dev@quickdropmedia.com']
+        ReplyToAddresses: ['squad@quickdropmedia.com']
     };
 
     return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();

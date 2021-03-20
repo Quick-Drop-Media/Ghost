@@ -313,7 +313,8 @@ figure blockquote p {
 
 .post-meta,
 .view-online {
-    padding-bottom: 50px;
+    padding-top: 20px;
+    padding-bottom: 30px;
     white-space: nowrap;
     color: #738a94;
     font-size: 13px;
@@ -892,9 +893,6 @@ ${ templateSettings.showBadge ? `
                                     ` : ''}
 
 
-                                    <tr>
-                                        <td class="post-title"><a href="${post.url}" class="post-title-link">${post.title}</a></td>
-                                    </tr>
                                     <tr>
                                         <td align="center">
                                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
