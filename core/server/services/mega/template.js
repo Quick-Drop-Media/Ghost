@@ -905,11 +905,6 @@ ${ templateSettings.showBadge ? `
                                             </table>
                                         </td>
                                     </tr>
-                                    ${post.feature_image ? `
-                                    <tr>
-                                        <td class="feature-image"><img src="${post.feature_image}"></td>
-                                    </tr>
-                                    ` : ``}
                                     <tr>
                                         <td class="${(templateSettings.bodyFontCategory === 'sans_serif') ? `post-content-sans-serif` : `post-content` }">
                                             <!-- POST CONTENT START -->
