@@ -80,7 +80,7 @@ hr {
     position: relative;
     display: block;
     width: 100%;
-    margin: 3em 0;
+    margin: 1em 0;
     padding: 0;
     height: 1px;
     border: 0;
@@ -190,19 +190,19 @@ h6 {
 }
 
 h1 {
-    margin: 1.5em 0 0.5em 0;
+    margin: 0.5em 0 0.5em 0;
     font-size: 42px;
     font-weight: 600;
 }
 
 h2 {
-    margin: 1.5em 0 0.5em 0;
+    margin: 0.5em 0 0.5em 0;
     font-size: 32px;
     line-height: 1.22em;
 }
 
 h3 {
-    margin: 1.5em 0 0.5em 0;
+    margin: 0.5em 0 0.5em 0;
     font-size: 26px;
     line-height: 1.25em;
     color: #007dde;
