@@ -869,7 +869,7 @@ ${ templateSettings.showBadge ? `
         <tr>
             <td>&nbsp;</td>
             <td class="container">
-                <div class="content">
+                <td class="content">
 
                     <!-- START CENTERED WHITE CONTAINER -->
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main" width="100%">
@@ -924,8 +924,49 @@ ${ templateSettings.showBadge ? `
                         <!-- END MAIN CONTENT AREA -->
 
                         <tr>
+                        <td class="wrapper" align="center">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width:100%;border-collapse:collapse">
+                            <tbody>
+                              <tr>
+                                <td style="padding-top:30px;padding-right:18px;padding-bottom:0;padding-left:18px" valign="top" align="center">
+                                  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse:separate!important;border-radius:10px;background-color:#007dde">
+                                    <tbody>
+                                      <tr>
+                                        <td align="center" valign="middle" style="font-size:16px;padding:18px">
+                                          <a title="SIGN UP" href="${site.url}/#/portal/signup" style="font-weight:bold;letter-spacing:normal;line-height:100%;text-align:center;text-decoration:none;color:#ffffff;display:block" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.quickdropmedia.com/">SIGN UP</a>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                          <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="display:inline;border-collapse:collapse;padding-top:10px">
+                          <tbody>
+                            <tr>
+                              <td align="left" valign="top" style="padding-right:10px;padding-bottom:0;padding-top:30px">
+                                <a href="https://twitter.com/QuickDropMedia" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://quickdropmedia.com"><img src="https://image.flaticon.com/icons/png/128/733/733579.png" alt="Quick Drop Twitter" width="48" style="width:48px;max-width:48px;display:block;border:0;height:auto;outline:none;text-decoration:none"></a>
+                              </td>
+                              <td align="left" valign="top" style="padding-right:10px;padding-bottom:0;padding-top:30px">
+                                <a href="https://www.twitch.tv/quickdropmedia/about" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://quickdropmedia.com"><img src="https://image.flaticon.com/icons/png/128/733/733577.png" alt="Quick Drop Twitch" width="48" style="width:48px;max-width:48px;display:block;border:0;height:auto;outline:none;text-decoration:none"></a>
+                              </td>
+                              <td align="left" valign="top" style="padding-right:10px;padding-bottom:0;padding-top:30px">
+                                <a href="https://www.facebook.com/QuickDropMedia" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://quickdropmedia.com"><img src="https://image.flaticon.com/icons/png/128/733/733547.png" alt="Quick Drop Facebook" width="48" style="width:48px;max-width:48px;display:block;border:0;height:auto;outline:none;text-decoration:none"></a>
+                              </td>
+                              <td align="left" valign="top" style="padding-right:10px;padding-bottom:0;padding-top:30px">
+                                <a href="${site.url}/daily-drops/rss" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://quickdropmedia.com"><img src="https://image.flaticon.com/icons/png/128/733/733569.png" alt="Quick Drop RSS Feed" width="48" style="width:48px;max-width:48px;display:block;border:0;height:auto;outline:none;text-decoration:none"></a>
+                              </td>
+                            </tr>
+                          </tbody>
+                          </table>
+                         </td>
+                        </tr>
+
+                        <tr>
                             <td class="wrapper" align="center">
-                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top: 40px; padding-bottom: 30px;">
+                                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top: 20px; padding-bottom: 30px;">
                                     ${iff(!!templateSettings.footerContent, `<tr><td class="footer">${templateSettings.footerContent}</td></tr>`, '')}
 
                                     <tr><td class="footer">Please reach out to us with any questions, feedback, or advertising inquiries.<br>
@@ -933,6 +974,8 @@ ${ templateSettings.showBadge ? `
                                     Contact: Squad@QuickDropMedia.com<br>
                                     PO Box 112662, Pittsburgh PA, 15241
                                     </td></tr>
+
+                                    <tr><td class="footer">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></td></tr>
 
                                     <tr>
                                         <td class="footer">${site.title} &copy; ${date.getFullYear()} – <a href="%recipient.unsubscribe_url%">Unsubscribe</a></td>
