@@ -359,7 +359,7 @@ figure blockquote p {
 
 .post-content a,
 .post-content-sans-serif a {
-    color: #08121A;
+    color: #007c89;
     text-decoration: underline;
 }
 
