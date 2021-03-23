@@ -34,7 +34,7 @@ function send(message, recipientData, replacements) {
         // err - too many recipients
     }
 
-    let templateName = 'TestPostNewsletter';
+    let templateName = 'DevTestPostNewsletter';
     const sesServiceObject = getInstance();
     var templateData = {
         Template: {
@@ -55,12 +55,12 @@ function send(message, recipientData, replacements) {
         });
     }
 
-    let templatePromise = sesServiceObject.updateTemplate(templateData).promise();
-    // TODO: How to wait until this completes before returning the sendBulkTemplatedEmail promise?
-    templatePromise.then(function(data) {
-        console.log(data);
-    }).catch(function(err) {
-        console.error(err, err.stack);
+    sesServiceObject.updateTemplate(templateData, function(err, data) {
+        if (err) {
+            console.log(err, err.stack);
+        } else {
+            console.log(data);
+        }
     });
 
     let messageData = {
@@ -68,7 +68,12 @@ function send(message, recipientData, replacements) {
         Source: 'Quick Drop Squad <squad@quickdropmedia.com>',
         Template: templateName,
         DefaultTemplateData: '{\"unsubscribe_url\": \"https://quickdropmedia.com/contact/\"}',
-        ReplyToAddresses: ['squad@quickdropmedia.com']
+        ReplyToAddresses: ['squad@quickdropmedia.com'],
+        ConfigurationSetName: 'QuickDropConfiugrationSet',
+        DefaultTags: [{
+            Name: 'source',
+            Value: 'ghost-local'
+        }]
     };
 
     return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();

@@ -928,7 +928,7 @@ ${ templateSettings.showBadge ? `
                                     <tbody>
                                       <tr>
                                         <td align="center" valign="middle" style="font-size:16px;padding:18px">
-                                          <a title="SIGN UP" href="${site.url}/#/portal/signup" style="font-weight:bold;letter-spacing:normal;line-height:100%;text-align:center;text-decoration:none;color:#ffffff;display:block" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.quickdropmedia.com/">SIGN UP</a>
+                                          <a title="SIGN UP" href="${site.url}#/portal/signup" style="font-weight:bold;letter-spacing:normal;line-height:100%;text-align:center;text-decoration:none;color:#ffffff;display:block" target="_blank" data-saferedirecturl="https://www.google.com/url?q=https://www.quickdropmedia.com/">SIGN UP</a>
                                         </td>
                                       </tr>
                                     </tbody>
@@ -973,7 +973,7 @@ ${ templateSettings.showBadge ? `
                                     <tr><td class="footer">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></td></tr>
 
                                     <tr>
-                                        <td class="footer">${site.title} &copy; ${date.getFullYear()} – <a href="%recipient.unsubscribe_url%">Unsubscribe</a></td>
+                                        <td class="footer">${site.title} &copy; ${date.getFullYear()} – <a href="{{unsubscribe_url}}">Unsubscribe</a></td>
                                     </tr>
 
                                     ${ templateSettings.showBadge ? `
