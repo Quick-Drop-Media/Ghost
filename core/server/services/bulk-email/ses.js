@@ -34,7 +34,7 @@ function send(message, recipientData, replacements) {
         // err - too many recipients
     }
 
-    let templateName = 'DevTestPostNewsletter';
+    let templateName = 'GhostNewsletter';
     const sesServiceObject = getInstance();
     var templateData = {
         Template: {
@@ -69,10 +69,10 @@ function send(message, recipientData, replacements) {
         Template: templateName,
         DefaultTemplateData: '{\"unsubscribe_url\": \"https://quickdropmedia.com/contact/\"}',
         ReplyToAddresses: ['squad@quickdropmedia.com'],
-        ConfigurationSetName: 'QuickDropConfiugrationSet',
+        ConfigurationSetName: 'QuickDropConfigurationSet',
         DefaultTags: [{
-            Name: 'source',
-            Value: 'ghost-local'
+            Name: 'environment',
+            Value: process.env.NODE_ENV
         }]
     };
 

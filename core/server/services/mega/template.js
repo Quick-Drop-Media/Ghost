@@ -172,7 +172,7 @@ blockquote cite a {
 }
 
 a {
-    color: #15212A;
+    color: #007c89;
     text-decoration: none;
 }
 
