@@ -197,13 +197,13 @@ h1 {
 
 h2 {
     margin: 0.5em 0 0.5em 0;
-    font-size: 32px;
+    font-size: 26px;
     line-height: 1.22em;
 }
 
 h3 {
     margin: 0.5em 0 0.5em 0;
-    font-size: 26px;
+    font-size: 22px;
     line-height: 1.25em;
     color: #007dde;
 }
