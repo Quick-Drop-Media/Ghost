@@ -973,7 +973,7 @@ ${ templateSettings.showBadge ? `
                                     <tr><td class="footer">Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></td></tr>
 
                                     <tr>
-                                        <td class="footer">${site.title} &copy; ${date.getFullYear()} – <a href="{{unsubscribe_url}}">Unsubscribe</a></td>
+                                        <td class="footer">${site.title}, LLC &copy; ${date.getFullYear()} – <a href="{{unsubscribe_url}}">Unsubscribe</a></td>
                                     </tr>
 
                                     ${ templateSettings.showBadge ? `

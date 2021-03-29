@@ -3,7 +3,7 @@ const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 2;
 
 function createSES(config) {
     AWS.config.update({
@@ -30,10 +30,6 @@ function getInstance() {
 }
 
 function send(message, recipientData, replacements) {
-    if (recipientData.length > BATCH_SIZE) {
-        // err - too many recipients
-    }
-
     let templateName = 'GhostNewsletter';
     const sesServiceObject = getInstance();
     var templateData = {
@@ -44,17 +40,6 @@ function send(message, recipientData, replacements) {
             TextPart: message.plaintext
         }
     };
-    // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/ses-examples-sending-email.html#ses-examples-sendbulktemplatedemail
-    let destinations = [];
-    for (const recipient in recipientData) {
-        destinations.push({
-            Destination: {
-                ToAddresses: new Array(recipient),
-            },
-            ReplacementTemplateData: JSON.stringify(recipientData[recipient])
-        });
-    }
-
     sesServiceObject.updateTemplate(templateData, function(err, data) {
         if (err) {
             console.log(err, err.stack);
@@ -63,8 +48,8 @@ function send(message, recipientData, replacements) {
         }
     });
 
+    let destinations = [];
     let messageData = {
-        Destinations: destinations,
         Source: 'Quick Drop Squad <squad@quickdropmedia.com>',
         Template: templateName,
         DefaultTemplateData: '{\"unsubscribe_url\": \"https://quickdropmedia.com/contact/\"}',
@@ -76,6 +61,25 @@ function send(message, recipientData, replacements) {
         }]
     };
 
+    for (const recipient in recipientData) {
+        destinations.push({
+            Destination: {
+                ToAddresses: new Array(recipient),
+            },
+            ReplacementTemplateData: JSON.stringify(recipientData[recipient])
+        });
+        if (destinations.length >= BATCH_SIZE) {
+            messageData.Destinations = destinations;
+            console.log('Sending ' + destinations.length + ' bulk emails.');
+            sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
+                console.log(result);
+            });
+            destinations = [];
+        }
+    }
+
+    messageData.Destinations = destinations;
+    console.log('Sending ' + destinations.length + ' bulk emails.');
     return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
 }
 
