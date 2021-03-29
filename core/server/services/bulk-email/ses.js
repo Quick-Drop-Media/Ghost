@@ -63,6 +63,7 @@ function send(message, recipientData, replacements) {
         }]
     };
 
+    let batchCount = 0;
     for (const recipient in recipientData) {
         destinations.push({
             Destination: {
@@ -70,21 +71,25 @@ function send(message, recipientData, replacements) {
             },
             ReplacementTemplateData: JSON.stringify(recipientData[recipient])
         });
+        console.log(recipient);
         if (destinations.length >= BATCH_SIZE) {
             messageData.Destinations = destinations;
-            console.log('Sending ' + destinations.length + ' bulk emails.');
-            sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
-                console.log(data);
-            }).catch(function (data) {
-                console.log(data);
-            });
+            console.log('Batch count: ' + batchCount);
+            batchCount += 1;
+
+            // console.log('Sending ' + destinations.length + ' bulk emails.');
+            // sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
+            //     console.log(data);
+            // }).catch(function (data) {
+            //     console.log(data);
+            // });
             destinations = [];
         }
     }
 
     messageData.Destinations = destinations;
-    console.log('Sending ' + destinations.length + ' bulk emails.');
-    return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
+    // console.log('Sending ' + destinations.length + ' bulk emails.');
+    return null; // sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
 }
 
 module.exports = {
