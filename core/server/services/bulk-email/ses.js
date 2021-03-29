@@ -74,7 +74,9 @@ function send(message, recipientData, replacements) {
             messageData.Destinations = destinations;
             console.log('Sending ' + destinations.length + ' bulk emails.');
             sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
-                console.log(result);
+                console.log(data);
+            }).catch(function (data) {
+                console.log(data);
             });
             destinations = [];
         }
