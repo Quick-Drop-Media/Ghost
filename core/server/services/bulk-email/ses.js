@@ -3,7 +3,7 @@ const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 40;
 
 function createSES(config) {
     AWS.config.update({
@@ -40,6 +40,8 @@ function send(message, recipientData, replacements) {
             TextPart: message.plaintext
         }
     };
+
+    console.log('Sending email with subject: ' + templateData.Template.SubjectPart);
     sesServiceObject.updateTemplate(templateData, function(err, data) {
         if (err) {
             console.log(err, err.stack);
