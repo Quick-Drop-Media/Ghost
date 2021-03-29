@@ -35,7 +35,7 @@ function send(message, recipientData, replacements) {
     var templateData = {
         Template: {
             TemplateName: templateName,
-            SubjectPart: message.subject,
+            SubjectPart: message.subject.replace('[Test] ', ''),
             HtmlPart: message.html,
             TextPart: message.plaintext
         }
