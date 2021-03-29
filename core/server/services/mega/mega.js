@@ -66,7 +66,7 @@ const getEmailData = async (postModel, options) => {
 const sendTestEmail = async (postModel, toEmails, apiVersion) => {
     const emailData = await getEmailData(postModel, {apiVersion});
     // TODO: Add [Test] back to subject when you have the updateTemplate bug resolved
-    emailData.subject = `${emailData.subject}`;
+    emailData.subject = emailData.subject;
 
     // fetch any matching members so that replacements use expected values
     const recipients = await Promise.all(toEmails.map(async (email) => {
