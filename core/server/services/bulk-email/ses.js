@@ -29,26 +29,19 @@ function getInstance() {
     return null;
 }
 
-function send(message, recipientData, replacements) {
+async function send(message, recipientData, replacements) {
     let templateName = 'GhostNewsletter';
     const sesServiceObject = getInstance();
     var templateData = {
         Template: {
             TemplateName: templateName,
-            SubjectPart: message.subject.replace('[Test] ', ''),
+            SubjectPart: message.subject,
             HtmlPart: message.html,
             TextPart: message.plaintext
         }
     };
 
-    console.log('Sending email with subject: ' + templateData.Template.SubjectPart);
-    sesServiceObject.updateTemplate(templateData, function(err, data) {
-        if (err) {
-            console.log(err, err.stack);
-        } else {
-            console.log(data);
-        }
-    });
+    let templatePromise = await updateTemplate(sesServiceObject, templateData);
 
     let destinations = [];
     let messageData = {
@@ -63,7 +56,6 @@ function send(message, recipientData, replacements) {
         }]
     };
 
-    let batchCount = 0;
     for (const recipient in recipientData) {
         destinations.push({
             Destination: {
@@ -71,25 +63,29 @@ function send(message, recipientData, replacements) {
             },
             ReplacementTemplateData: JSON.stringify(recipientData[recipient])
         });
-        console.log(recipient);
         if (destinations.length >= BATCH_SIZE) {
             messageData.Destinations = destinations;
-            console.log('Batch count: ' + batchCount);
-            batchCount += 1;
-
-            // console.log('Sending ' + destinations.length + ' bulk emails.');
-            // sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
-            //     console.log(data);
-            // }).catch(function (data) {
-            //     console.log(data);
-            // });
+            console.log('Sending ' + messageData.Destinations.length + ' bulk emails.');
+            sesServiceObject.sendBulkTemplatedEmail(messageData).promise().then(function(data) {
+                console.log(data);
+            }).catch(function (data) {
+                console.log(data);
+            });
             destinations = [];
         }
     }
 
     messageData.Destinations = destinations;
-    // console.log('Sending ' + destinations.length + ' bulk emails.');
-    return null; // sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
+    console.log('Sending ' + destinations.length + ' bulk emails.');
+    return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
+}
+
+async function updateTemplate(sesServiceObject, templateData) {
+    return await sesServiceObject.updateTemplate(templateData).promise().then(function(data) {
+        console.log('Template updated');
+    }).catch(function (err) {
+        console.error(err, err.stack);
+    });
 }
 
 module.exports = {

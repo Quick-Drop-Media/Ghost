@@ -169,11 +169,12 @@ module.exports = {
         try {
             // send the email
             const sendResponse = await this.send(emailBatchModel.relations.email.toJSON(), recipientRows);
-
+            console.log(sendResponse);
             // update batch success status
+            // TODO: What to use as provider_id for SES?
             return await emailBatchModel.save({
                 status: 'submitted',
-                provider_id: sendResponse.id.trim().replace(/^<|>$/g, '')
+                provider_id: null
             }, Object.assign({}, knexOptions, {patch: true}));
         } catch (error) {
             // update batch failed status
