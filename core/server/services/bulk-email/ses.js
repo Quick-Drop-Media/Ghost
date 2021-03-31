@@ -4,7 +4,7 @@ const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
 
 // Max is 50, but using our current per-second rate limit
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 14;
 
 function createSES(config) {
     AWS.config.update({
