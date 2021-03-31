@@ -3,7 +3,8 @@ const _ = require('lodash');
 const logging = require('../../../shared/logging');
 const settingsCache = require('../settings/cache');
 
-const BATCH_SIZE = 40;
+// Max is 50, but using our current per-second rate limit
+const BATCH_SIZE = 2;
 
 function createSES(config) {
     AWS.config.update({
@@ -28,6 +29,9 @@ function getInstance() {
     }
     return null;
 }
+
+// SES rate-limits us currently at 14 emails / second
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function send(message, recipientData, replacements) {
     let templateName = 'GhostNewsletter';
@@ -71,12 +75,16 @@ async function send(message, recipientData, replacements) {
             }).catch(function (data) {
                 console.log(data);
             });
+            console.log(`Sleeping. ${Date.now()}`);
+            await sleep(1000);
             destinations = [];
         }
     }
 
     messageData.Destinations = destinations;
     console.log('Sending ' + destinations.length + ' bulk emails.');
+    console.log(`Sleeping one last time. Why not. ${Date.now()}`);
+    await sleep(1000);
     return sesServiceObject.sendBulkTemplatedEmail(messageData).promise();
 }
 
