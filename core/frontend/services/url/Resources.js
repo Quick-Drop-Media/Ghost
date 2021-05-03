@@ -52,7 +52,8 @@ class Resources {
             return this.resourceConfig;
         }
 
-        this.resourcesAPIVersion = require('../themes').getApiVersion();
+        const bridge = require('../../../bridge');
+        this.resourcesAPIVersion = bridge.getFrontendApiVersion();
         this.resourcesConfig = require(`./configs/${this.resourcesAPIVersion}`);
     }
 

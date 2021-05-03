@@ -87,6 +87,12 @@ module.exports = function apiRoutes() {
     router.put('/tags/:id', mw.authAdminApi, http(apiCanary.tags.edit));
     router.del('/tags/:id', mw.authAdminApi, http(apiCanary.tags.destroy));
 
+    // Products
+    router.get('/products', mw.authAdminApi, http(apiCanary.products.browse));
+    router.post('/products', mw.authAdminApi, http(apiCanary.products.add));
+    router.get('/products/:id', mw.authAdminApi, http(apiCanary.products.read));
+    router.put('/products/:id', mw.authAdminApi, http(apiCanary.products.edit));
+
     // ## Members
     router.get('/members', mw.authAdminApi, http(apiCanary.members.browse));
     router.post('/members', mw.authAdminApi, http(apiCanary.members.add));
@@ -115,6 +121,7 @@ module.exports = function apiRoutes() {
     router.put('/members/:id', mw.authAdminApi, http(apiCanary.members.edit));
     router.del('/members/:id', mw.authAdminApi, http(apiCanary.members.destroy));
 
+    router.post('/members/:id/subscriptions/', mw.authAdminApi, http(apiCanary.members.createSubscription));
     router.put('/members/:id/subscriptions/:subscription_id', mw.authAdminApi, http(apiCanary.members.editSubscription));
 
     router.get('/members/:id/signin_urls', mw.authAdminApi, http(apiCanary.memberSigninUrls.read));
