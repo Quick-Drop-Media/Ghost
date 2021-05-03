@@ -153,9 +153,17 @@ function testPing() {
     });
 }
 
+function newMemberPing(model, options) {
+    let member = model.toJSON();
+    ping({
+        message: `${member['email']} subscribed to Quick Drop!`
+    });
+}
+
 function listen() {
     events.on('post.published', listener);
     events.on('slack.test', testPing);
+    events.on('member.added', newMemberPing);
 }
 
 // Public API
