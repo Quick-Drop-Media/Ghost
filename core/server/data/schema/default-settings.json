@@ -518,5 +518,27 @@
             "defaultValue": null,
             "type": "string"
         }
+    },
+    "growsurf": {
+        "growsurf": {
+            "defaultValue": "false",
+            "validations": {
+                "isIn": [
+                    [
+                        "true",
+                        "false"
+                    ]
+                ]
+            },
+            "type": "boolean"
+        },
+        "growsurf_api_key": {
+            "defaultValue": null,
+            "type": "string"
+        },
+        "growsurf_campaign_id": {
+            "defaultValue": null,
+            "type": "string"
+        }
     }
 }

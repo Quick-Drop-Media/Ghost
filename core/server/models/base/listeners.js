@@ -5,6 +5,8 @@ const {events} = require('../../lib/common');
 const logging = require('../../../shared/logging');
 const errors = require('@tryghost/errors');
 const {sequence} = require('@tryghost/promise');
+const request = require("request");
+const settingsCache = require('../../services/settings/cache');
 
 /**
  * WHEN timezone changes, we will:
@@ -117,5 +119,39 @@ events.on('settings.notifications.edited', function (settingModel) {
         value: JSON.stringify(allNotifications)
     }, options).catch(function (err) {
         errors.logError(err);
+    });
+});
+
+events.on('member.added', function (model) {
+    // Ok now we can confirm the referral
+    // TODO: Consolidate this with the other GrowSurf participant API logic
+    let api_key = settingsCache.get('growsurf_api_key');
+    if (!api_key) {
+        return;
+    }
+
+    const campaign_id = settingsCache.get('growsurf_campaign_id');
+    if (!campaign_id) {
+        console.log('No GrowSurf campaign ID provided');
+        return;
+    }
+
+    let member = model.toJSON();
+    const options = {
+        method: 'POST',
+        url: `https://api.growsurf.com/v2/campaign/${campaign_id}/participant/${member.email}/ref`,
+        json: true,
+        headers: {
+            Authorization: `Bearer ${api_key}`
+        }
+    };
+
+    // Used for anti-fraud
+    if (member.geolocation && member.geolocation.ip) {
+        options.body.ipAddress = member.geolocation.ip;
+    }
+
+    request(options, function (error, response, body) {
+        console.log(body);
     });
 });
