@@ -13,6 +13,7 @@ const groupTypeMapping = {
     email: 'bulk_email',
     newsletter: 'newsletter',
     firstpromoter: 'firstpromoter',
+    growsurf: 'growsurf',
     oauth: 'oauth',
     editor: 'editor'
 };

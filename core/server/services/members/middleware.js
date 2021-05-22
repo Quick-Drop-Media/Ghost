@@ -5,6 +5,7 @@ const urlUtils = require('../../../shared/url-utils');
 const ghostVersion = require('../../lib/ghost-version');
 const settingsCache = require('../settings/cache');
 const {formattedMemberResponse} = require('./utils');
+const request = require("request");
 
 // @TODO: This piece of middleware actually belongs to the frontend, not to the member app
 // Need to figure a way to separate these things (e.g. frontend actually talks to members API)
@@ -144,6 +145,53 @@ const getMemberSiteData = async function (req, res) {
     res.json({site: response});
 };
 
+const sendMemberMagicLink = async function(req, res, next) {
+    // GrowSurf hack-y integration for the moment
+    let data = '';
+    req.on('data', function (chunk) {
+        data += chunk;
+    });
+    req.on('end', function () {
+        data = JSON.parse(data);
+        if (data.emailType !== 'subscribe') {
+            return;
+        }
+        let referer_url = new URL(req.headers.referer);
+        let referer_params = new URLSearchParams(referer_url.search);
+        const GRSF_KEY = 'grsf';
+        if (referer_params.has(GRSF_KEY)) {
+            let api_key = settingsCache.get('growsurf_api_key');
+            if (!api_key) {
+                console.log('No GrowSurf API key provided');
+                return;
+            }
+            const campaign_id = settingsCache.get('growsurf_campaign_id');
+            if (!campaign_id) {
+                console.log('No GrowSurf campaign ID provided');
+                return;
+            }
+            const options = {
+                method: 'POST',
+                url: `https://api.growsurf.com/v2/campaign/${campaign_id}/participant`,
+                json: true,
+                headers: {
+                    Authorization: `Bearer ${api_key}`
+                },
+                body: {
+                    email: data.email,
+                    referredBy: referer_params.get(GRSF_KEY),
+                    referralStatus: 'CREDIT_PENDING'
+                }
+            };
+
+            request(options, function (error, response, body) {
+                console.log(`New GrowSurf participant: ${body}`);
+            });
+        }
+    });
+    await membersService.api.middleware.sendMagicLink(req, res, next);
+};
+
 const createSessionFromMagicLink = async function (req, res, next) {
     if (!req.url.includes('token=')) {
         return next();
@@ -198,6 +246,7 @@ const createSessionFromMagicLink = async function (req, res, next) {
 // Set req.member & res.locals.member if a cookie is set
 module.exports = {
     loadMemberSession,
+    sendMemberMagicLink,
     createSessionFromMagicLink,
     getIdentityToken,
     getMemberData,
