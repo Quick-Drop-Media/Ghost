@@ -7,7 +7,7 @@ const models = require('../../models');
 const membersService = require('../../services/members');
 
 const settingsCache = require('../../services/settings/cache');
-const {i18n} = require('../../lib/common');
+const i18n = require('../../../shared/i18n');
 const _ = require('lodash');
 
 const allowedIncludes = ['email_recipients', 'products'];
@@ -126,7 +126,10 @@ module.exports = {
                 member = await membersService.api.members.create(frame.data.members[0], frame.options);
 
                 if (frame.data.members[0].stripe_customer_id) {
-                    await membersService.api.members.linkStripeCustomer(frame.data.members[0].stripe_customer_id, member);
+                    await membersService.api.members.linkStripeCustomer({
+                        customer_id: frame.data.members[0].stripe_customer_id,
+                        member_id: member.id
+                    }, frame.options);
                 }
 
                 if (frame.data.members[0].comped) {
@@ -197,10 +200,10 @@ module.exports = {
                         await membersService.api.members.cancelComplimentarySubscription(member);
                     }
 
-                    await member.load(['stripeSubscriptions']);
+                    await member.load(['stripeSubscriptions', 'products', 'stripeSubscriptions.stripePrice', 'stripeSubscriptions.stripePrice.stripeProduct']);
                 }
 
-                await member.load(['stripeSubscriptions.customer']);
+                await member.load(['stripeSubscriptions.customer', 'stripeSubscriptions.stripePrice', 'stripeSubscriptions.stripePrice.stripeProduct']);
 
                 return member;
             } catch (error) {

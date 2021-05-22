@@ -1,4 +1,4 @@
-const {events} = require('../../lib/common');
+const events = require('../../lib/common/events');
 const themeService = require('../../services/themes');
 const limitService = require('../../services/limits');
 const models = require('../../models');
@@ -28,8 +28,13 @@ module.exports = {
             }
         },
         permissions: true,
-        query(frame) {
+        async query(frame) {
             let themeName = frame.options.name;
+
+            if (limitService.isLimited('customThemes')) {
+                await limitService.errorIfWouldGoOverLimit('customThemes', {value: themeName});
+            }
+
             const newSettings = [{
                 key: 'active_theme',
                 value: themeName
@@ -54,7 +59,8 @@ module.exports = {
         },
         async query(frame) {
             if (limitService.isLimited('customThemes')) {
-                await limitService.errorIfWouldGoOverLimit('customThemes');
+                // Sending a bad string to make sure it fails (empty string isn't valid)
+                await limitService.errorIfWouldGoOverLimit('customThemes', {value: '.'});
             }
 
             // @NOTE: consistent filename uploads
